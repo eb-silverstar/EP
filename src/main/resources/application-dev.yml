@@ -1,0 +1,47 @@
+server:
+  port: 9082
+  servlet:
+    context-path: /api
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+    multipart:
+      enabled: true
+      max-file-size: 150MB
+      max-request-size: 150MB
+
+spring:
+  datasource:
+    hikari:
+      connection-timeout: 30000
+      validation-timeout: 10000
+      maximum-pool-size: 30
+      minimum-idle: 5
+
+logging:
+  level:
+    com.kt.edu.portal: DEBUG
+    jdbc.sqltiming: INFO
+    jdbc.resultsettable: INFO
+
+mybatis:
+  type-aliases-package: com.edu.portal
+  mapper-locations: mybatis/mapper/*.xml
+  configuration:
+    cache-enabled: true
+    lazy-loading-enabled: true
+    multiple-result-sets-enabled: true
+    use-column-label: true
+    auto-mapping-behavior: partial
+    auto-mapping-unknown-column-behavior: WARNING
+    default-executor-type: simple
+    default-statement-timeout: 30
+    default-fetch-size: 100
+    safe-row-bounds-enabled: false
+    map-underscore-to-camel-case: true
+    local-cache-scope: session
+    jdbc-type-for-null: NULL
+
+tenants:
+  path: /home/gnew/ikium/tenants

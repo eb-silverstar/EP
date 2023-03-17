@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.portal.user.UserMapper">
+
+    <select id="cntUsers" parameterType="Map" resultType="int">
+        SELECT
+            COUNT(1)
+        FROM user
+        <include refid="usersConditions"/>
+    </select>
+
+    <select id="getUsers" parameterType="Map" resultType="UserDTO">
+        SELECT
+        <include refid="userElements"/>
+        FROM user
+        <include refid="usersConditions"/>
+        ORDER BY ${order_by}
+        LIMIT ${offset}, ${limit}
+    </select>
+
+    <select id="getUser" parameterType="int" resultType="UserDTO">
+        SELECT
+        <include refid="userElements"/>
+        FROM user
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </select>
+
+    <select id="getActiveUser" parameterType="Map" resultType="UserDTO">
+        SELECT
+        <include refid="userElements"/>
+        FROM user
+        WHERE 1 = 1
+        AND use_yn = 'Y'
+        <if test="mbrId != null">
+            AND mbr_id = #{mbrId}
+        </if>
+        <if test="mbrNm != null">
+            AND mbr_nm = #{mbrNm}
+        </if>
+        <if test="mbrTelno != null">
+            AND mbr_telno = #{mbrTelno}
+        </if>
+    </select>
+
+    <select id="getLoginUser" parameterType="Map" resultType="UserDTO">
+        SELECT
+        <include refid="userElements"/>
+        FROM user
+        WHERE 1 = 1
+        AND use_yn = 'Y'
+        AND mbr_id = #{mbrId}
+        <if test="mbrAuthrt != null">
+            AND mbr_authrt IN (<foreach collection="mbrAuthrt" item="auth" separator=",">#{auth}</foreach>)
+        </if>
+    </select>
+
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="uno" parameterType="UserDTO">
+        INSERT INTO user
+        (
+            mbr_id
+            ,mbr_nm
+            ,mbr_pswd
+            ,mbr_telno
+            ,mbr_eml_addr
+        <if test="mbrAuthrt != null">
+            ,mbr_authrt
+        </if>
+        <if test="mbrAprvCdYn != null">
+            ,mbr_aprv_cd_yn
+        </if>
+        <if test="mbrPswdVldDt != null">
+            ,mbr_pswd_vld_dt
+        </if>
+        <if test="mbrPswdErrCnt != null">
+            ,mbr_pswd_err_cnt
+        </if>
+        <if test="useLock != null">
+            ,use_lock
+        </if>
+        <if test="useYn != null">
+            ,use_yn
+        </if>
+        <if test="useState != null">
+            ,use_state
+        </if>
+            ,cntr_uno
+            ,reg_mntr_uno
+            ,aprv_mntr_uno
+        <if test="mbrPrvcAgreYn != null">
+            ,mbr_prvc_agre_yn
+        </if>
+        <if test="regDt != null">
+            ,reg_dt
+        </if>
+        <if test="chgDt != null">
+            ,chg_dt
+        </if>
+        )
+        VALUES
+        (
+            #{mbrId}
+            ,#{mbrNm}
+            ,#{mbrPswd}
+            ,#{mbrTelno}
+            ,#{mbrEmlAddr}
+        <if test="mbrAuthrt != null">
+            ,#{mbrAuthrt}
+        </if>
+        <if test="mbrAprvCdYn != null">
+            ,#{mbrAprvCdYn}
+        </if>
+        <if test="mbrPswdVldDt != null">
+            ,#{mbrPswdVldDt}
+        </if>
+        <if test="mbrPswdErrCnt != null">
+            ,#{mbrPswdErrCnt}
+        </if>
+        <if test="useLock != null">
+            ,#{useLock}
+        </if>
+        <if test="useYn != null">
+            ,#{useYn}
+        </if>
+        <if test="useState != null">
+            ,#{useState}
+        </if>
+            ,#{cntrUno}
+            ,#{regMntrUno}
+            ,#{aprvMntrUno}
+        <if test="mbrPrvcAgreYn != null">
+            ,#{mbrPrvcAgreYn}
+        </if>
+        <if test="regDt != null">
+            ,#{regDt}
+        </if>
+        <if test="chgDt != null">
+            ,#{chgDt}
+        </if>
+        )
+    </insert>
+
+    <update id="updateUser" parameterType="UserDTO">
+        UPDATE user
+        SET
+            chg_dt = now()
+            <if test="mbrId != null">
+                ,mbr_id = #{mbrId}
+            </if>
+            <if test="mbrNm != null">
+                ,mbr_nm = #{mbrNm}
+            </if>
+            <if test="mbrPswd != null">
+                ,mbr_pswd = #{mbrPswd}
+            </if>
+            <if test="mbrEmlAddr != null">
+                ,mbr_eml_addr = #{mbrEmlAddr}
+            </if>
+            <if test="cntrUno != null">
+                ,cntr_uno = #{cntrUno}
+            </if>
+            <if test="useState != null">
+                ,use_state = #{useState}
+            </if>
+            <if test="mbrAprvCdYn != null">
+                ,mbr_aprv_cd_yn = #{mbrAprvCdYn}
+            </if>
+            <if test="useYn != null">
+                ,use_yn = #{useYn}
+            </if>
+            <if test="mbrPswdVldDt != null">
+                ,mbr_pswd_vld_dt = #{mbrPswdVldDt}
+            </if>
+            <if test="mbrPswdErrCnt != null">
+                ,mbr_pswd_err_cnt = #{mbrPswdErrCnt}
+            </if>
+            <if test="useLock != null">
+                ,use_lock = #{useLock}
+            </if>
+            <if test="aprvMntrUno != null">
+                ,aprv_mntr_uno = #{aprvMntrUno}
+            </if>
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </update>
+
+    <update id="updatePswd" parameterType="UserDTO">
+        UPDATE user
+        SET
+            chg_dt = now()
+            ,mbr_pswd = #{mbrPswd}
+        WHERE 1 = 1
+        AND mbr_id = #{mbrId}
+    </update>
+
+    <update id="updatePswdErr" parameterType="UserDTO">
+        UPDATE user
+        SET
+            mbr_pswd_err_cnt = #{mbrPswdErrCnt}
+            ,use_lock = #{useLock}
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </update>
+
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM user
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </delete>
+
+    <sql id="userElements">
+        uno
+        ,mbr_id
+        ,mbr_nm
+        ,mbr_pswd
+        ,mbr_telno
+        ,mbr_eml_addr
+        ,mbr_authrt
+        ,mbr_aprv_cd_yn
+        ,mbr_pswd_vld_dt
+        ,mbr_pswd_err_cnt
+        ,use_lock
+        ,use_yn
+        ,use_state
+        ,cntr_uno
+        ,reg_mntr_uno
+        ,aprv_mntr_uno
+        ,mbr_prvc_agre_yn
+        ,reg_dt
+        ,chg_dt
+    </sql>
+
+    <sql id="usersConditions">
+        WHERE 1 = 1
+        <if test="chg_dt != null">
+            AND chg_dt ${chg_dt}
+        </if>
+        <if test="reg_dt != null">
+            AND reg_dt ${reg_dt}
+        </if>
+        <if test="use_state != null">
+            AND use_state ${use_state}
+        </if>
+        <if test="use_lock != null">
+            AND use_lock ${use_lock}
+        </if>
+        <if test="use_yn != null">
+            AND use_yn ${use_yn}
+        </if>
+        <if test="cntr_uno != null">
+            AND cntr_uno ${cntr_uno}
+        </if>
+        <if test="mbr_authrt != null">
+            AND mbr_authrt ${mbr_authrt}
+        </if>
+        <if test="mbr_aprv_cd_yn != null">
+            AND mbr_aprv_cd_yn ${mbr_aprv_cd_yn}
+        </if>
+        <if test="mbr_id != null">
+            AND mbr_id ${mbr_id}
+        </if>
+        <if test="mbr_nm != null">
+            AND mbr_nm ${mbr_nm}
+        </if>
+        <if test="mbr_telno != null">
+            AND mbr_telno ${mbr_telno}
+        </if>
+        <if test="cntr_nm != null">
+            AND cntr_uno IN (SELECT uno
+            FROM center
+            WHERE cntr_nm ${cntr_nm})
+        </if>
+    </sql>
+
+</mapper>

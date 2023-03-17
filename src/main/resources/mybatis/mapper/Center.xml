@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.portal.center.CenterMapper">
+
+    <select id="cntCenters" parameterType="Map" resultType="int">
+        SELECT
+            COUNT(1)
+        FROM user
+        <include refid="centerConditions"/>
+    </select>
+
+    <select id="getCenters" parameterType="Map" resultType="CenterDTO">
+        SELECT
+        <include refid="centerElements"/>
+        FROM user
+        <include refid="centerConditions"/>
+        ORDER BY ${order_by}
+        LIMIT ${offset}, ${limit}
+    </select>
+
+    <select id="getCenter" parameterType="int" resultType="CenterDTO">
+        SELECT
+        <include refid="centerElements"/>
+        FROM center
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </select>
+
+    <sql id="centerElements">
+        uno
+        ,cntr_nm
+        ,cntr_addr
+        ,cntr_telno
+        ,cntr_aprv_cd
+        ,devc_id
+        ,rgtr_uno
+        ,reg_dt
+        ,chg_dt
+    </sql>
+
+    <sql id="centerConditions">
+        WHERE 1 = 1
+        <if test="chg_dt != null">
+            AND chg_dt ${chg_dt}
+        </if>
+        <if test="cntr_nm != null">
+            AND cntr_nm ${cntr_nm}
+        </if>
+        <if test="cntr_addr != null">
+            AND cntr_addr ${cntr_addr}
+        </if>
+        <if test="cntr_telno != null">
+            AND cntr_telno ${cntr_telno}
+        </if>
+    </sql>
+
+</mapper>
