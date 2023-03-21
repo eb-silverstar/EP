@@ -21,7 +21,7 @@ spring:
 
 logging:
   level:
-    com.kt.edu.portal: DEBUG
+    com.edu.portal: DEBUG
     jdbc.sqltiming: INFO
     jdbc.resultsettable: INFO
 

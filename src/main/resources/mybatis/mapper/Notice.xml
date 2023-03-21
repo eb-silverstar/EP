@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.portal.notice.NoticeMapper">
+
+    <select id="cntNotices" parameterType="Map" resultType="int">
+        SELECT
+        COUNT(1)
+        FROM notice
+        <include refid="noticeConditions"/>
+    </select>
+
+    <select id="getNotices" parameterType="Map" resultType="NoticeDTO">
+        SELECT
+        <include refid="noticeElements"/>
+        FROM notice
+        <include refid="noticeConditions"/>
+        ORDER BY ${order_by}
+        LIMIT ${offset}, ${limit}
+    </select>
+
+    <select id="getNotice" parameterType="int" resultType="NoticeDTO">
+        SELECT
+        <include refid="noticeElements"/>
+        FROM notice
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </select>
+
+    <insert id="insertNotice" useGeneratedKeys="true" keyProperty="uno" parameterType="NoticeDTO">
+        INSERT INTO notice
+        (
+            ntc_ttl
+            ,ntc_cn
+            ,fixed_yn
+            ,rgtr_uno
+            ,reg_dt
+            ,chg_dt
+        )
+        VALUES
+        (
+            #{ntcTtl}
+            ,#{ntcCn}
+            ,#{fixedYn}
+            ,#{rgtrUno}
+            ,now()
+            ,now()
+        )
+    </insert>
+
+    <update id="updateNotice" parameterType="NoticeDTO">
+        UPDATE notice
+        SET
+            chg_dt = now()
+            ,ntc_ttl = #{ntcTtl}
+            ,ntc_cn = #{ntcCn}
+            ,fixed_yn = #{fixedYn}
+            ,rgtr_uno = #{rgtrUno}
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </update>
+
+    <delete id="deleteNotice" parameterType="int">
+        DELETE FROM notice
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </delete>
+
+    <sql id="noticeElements">
+        uno
+        ,ntc_ttl
+        ,ntc_cn
+        ,fixed_yn
+        ,rgtr_uno
+        ,reg_dt
+        ,chg_dt
+    </sql>
+
+    <sql id="noticeConditions">
+        WHERE 1 = 1
+        <if test="ntc_ttl != null">
+            AND ntc_ttl ${ntc_ttl}
+        </if>
+        <if test="ntc_cn != null">
+            OR ntc_cn ${ntc_cn}
+        </if>
+        <if test="mbr_nm != null">
+            AND rgtr_uno IN (SELECT uno FROM user WHERE mbr_nm ${mbr_nm}
+        </if>
+    </sql>
+
+</mapper>

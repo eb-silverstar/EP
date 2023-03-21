@@ -266,9 +266,7 @@
             AND mbr_telno ${mbr_telno}
         </if>
         <if test="cntr_nm != null">
-            AND cntr_uno IN (SELECT uno
-            FROM center
-            WHERE cntr_nm ${cntr_nm})
+            AND cntr_uno IN (SELECT uno FROM center WHERE cntr_nm ${cntr_nm})
         </if>
     </sql>
 

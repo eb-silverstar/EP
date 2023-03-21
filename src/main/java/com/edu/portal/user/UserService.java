@@ -1,9 +1,9 @@
 package com.edu.portal.user;
 
-import com.edu.portal.common.Constants;
-import com.edu.portal.center.CenterMapper;
+import com.edu.portal.center.CenterService;
 import com.edu.portal.common.ApiException;
 import com.edu.portal.common.ApiStatusEntity;
+import com.edu.portal.common.Constants;
 import com.edu.portal.common.Utils;
 import com.edu.portal.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,8 @@ public class UserService {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtProvider jwtProvider;
+    private final CenterService centerService;
     private final UserMapper userMapper;
-    private final CenterMapper centerMapper;
 
     /**
      * 회원 목록 조회
@@ -43,15 +43,11 @@ public class UserService {
         map.put("offset", String.valueOf(Integer.parseInt(map.get("limit")) * (Integer.parseInt(map.get("page")) - 1)));
 
         // filter parsing
-        for(Map<String, String> fMap : Utils.parseFilter((String) map.get("filter"))) {
-            if("user".equals(fMap.get("tbl"))) {
-                map.put(fMap.get("col"), fMap.get("con"));
-
-            } else if("center".equals(fMap.get("tbl")) && "uno".equals(fMap.get("col"))) {
+        for(Map<String, String> fMap : Utils.parseFilter(map.get("filter"))) {
+            if("center".equals(fMap.get("tbl")) && "uno".equals(fMap.get("col"))) {
                 map.put("cntr_uno", fMap.get("con"));
-
-            } else if("center".equals(fMap.get("tbl")) && "nm".equals(fMap.get("col"))) {
-                map.put("cntr_nm", fMap.get("con"));
+            } else {
+                map.put(fMap.get("col"), fMap.get("con"));
             }
         }
 
@@ -59,12 +55,9 @@ public class UserService {
         map.put("order_by", Utils.parseOrder(map.get("order"), map.get("sort")));
 
         List<UserDTO> users = userMapper.getUsers(map);
-
-        for(UserDTO user : users) {
-            if(user.getCntrUno() != null) {
-                user.setCenter(centerMapper.getCenter(user.getCntrUno()));
-            }
-        }
+        users.forEach(i -> {
+            if(i.getCntrUno() != null) i.setCenter(centerService.getCenter(i.getCntrUno()));
+        });
 
         Map<String, Object> result = new HashMap<>();
         result.put("count", userMapper.cntUsers(map));
@@ -123,7 +116,7 @@ public class UserService {
 
         userMapper.insertUser(user);
 
-        return userMapper.getUser(user.getUno());
+        return getUser(user.getUno());
     }
 
     /**
@@ -171,7 +164,7 @@ public class UserService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         result.setApiToken(jwtProvider.generateToken(authentication));
-        result.setCenter(centerMapper.getCenter(result.getCntrUno()));
+        result.setCenter(centerService.getCenter(result.getCntrUno()));
 
         if(result.getMbrPswdErrCnt() > 0) {
             result.setMbrPswdErrCnt(0);
@@ -204,7 +197,7 @@ public class UserService {
         }
 
         user = userMapper.getUser(uno);
-        user.setCenter(centerMapper.getCenter(user.getCntrUno()));
+        user.setCenter(centerService.getCenter(user.getCntrUno()));
 
         return user;
     }

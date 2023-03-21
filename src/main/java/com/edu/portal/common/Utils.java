@@ -24,6 +24,9 @@ public class Utils {
                     map.put("op", arr[2]);
                     map.put("val", arr[3]);
                     map.put("val2", arr[4]);
+                    map.put("fmt", arr[5]);
+                    map.put("ptn", arr[6]);
+                    map.put("isnull", arr[7]);
                 } catch (IndexOutOfBoundsException e) {}
 
                 if("between".equals(map.get("op"))) {
@@ -32,33 +35,57 @@ public class Utils {
                 }
 
                 if(!map.get("tbl").isEmpty() && !map.get("col").isEmpty()) {
-                    //TODO
                     if(map.get("col").contains(",")) {
                         for(String col : map.get("col").split(",")) {
+                            Map<String, String> iMap = new HashMap<>();
+                            iMap.put("tbl", map.get("tbl"));
+                            iMap.put("col", col);
+
                             if("in".equals(map.get("op")) && !map.get("val").isEmpty()) {
+                                iMap.put("con", "IN (" + map.get("val").replaceAll("([^,]*)", "'$1',") + ")");
+                            } else if("like".equals(map.get("op")) && !map.get("val").isEmpty()) {
+                                iMap.put("con", "LIKE '%" + map.get("val") + "%'");
+                            } else if("between".equals(map.get("op")) && !map.get("val").isEmpty() && !map.get("val2").isEmpty()) {
+                                iMap.put("con", "BETWEEN '" + map.get("val") + "' AND '" + map.get("val2") + "'");
+                            } else if("and".equals(map.get("op")) && !map.get("val").isEmpty()) {
+                                iMap.put("con", "= '" + map.get("val") + "'");
+                            } else if("or".equals(map.get("op")) && !map.get("val").isEmpty()) {
+                                //TODO
                             }
+                            if("Y".equals(map.get("isnull"))) {
+                                iMap.put("con", "IS NULL");
+                            } else if("N".equals(map.get("isnull"))) {
+                                iMap.put("con", "IS NOT NULL");
+                            }
+
+                            result.add(iMap);
                         }
 
                     } else {
                         if("in".equals(map.get("op")) && !map.get("val").isEmpty()) {
-                            //TODO
-
+                            map.put("con", "IN (" + map.get("val").replaceAll("([^,]*)", "'$1',") + ")");
                         } else if("like".equals(map.get("op")) && !map.get("val").isEmpty()) {
                             map.put("con", "LIKE '%" + map.get("val") + "%'");
-
                         } else if("between".equals(map.get("op")) && !map.get("val").isEmpty() && !map.get("val2").isEmpty()) {
                             map.put("con", "BETWEEN '" + map.get("val") + "' AND '" + map.get("val2") + "'");
-
                         } else if("and".equals(map.get("op")) && !map.get("val").isEmpty()) {
                             map.put("con", "= '" + map.get("val") + "'");
-
                         } else {
-                            //TODO
+                            if("Y".equals(map.get("isnull"))) {
+                                map.put("con", "IS NULL");
+                            } else if("N".equals(map.get("isnull"))) {
+                                map.put("con", "IS NOT NULL");
+                            } else {
+                                if("in".equals(map.get("op")) || "like".equals(map.get("op")) || "between".equals(map.get("op"))
+                                        || "and".equals(map.get("op")) || "or".equals(map.get("op"))) {
+                                    //TODO
+                                }
+                            }
                         }
+
+                        result.add(map);
                     }
                 }
-
-                result.add(map);
             }
         }
 

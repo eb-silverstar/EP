@@ -5,14 +5,14 @@
     <select id="cntCenters" parameterType="Map" resultType="int">
         SELECT
             COUNT(1)
-        FROM user
+        FROM center
         <include refid="centerConditions"/>
     </select>
 
     <select id="getCenters" parameterType="Map" resultType="CenterDTO">
         SELECT
         <include refid="centerElements"/>
-        FROM user
+        FROM center
         <include refid="centerConditions"/>
         ORDER BY ${order_by}
         LIMIT ${offset}, ${limit}
@@ -25,6 +25,58 @@
         WHERE 1 = 1
         AND uno = #{uno}
     </select>
+
+    <select id="getCenterByNm" parameterType="String" resultType="CenterDTO">
+        SELECT
+        <include refid="centerElements"/>
+        FROM center
+        WHERE 1 = 1
+        AND cntr_nm = #{cntrNm}
+    </select>
+
+    <insert id="insertCenter" useGeneratedKeys="true" keyProperty="uno" parameterType="CenterDTO">
+        INSERT INTO center
+        (
+            cntr_nm
+            ,cntr_addr
+            ,cntr_telno
+            ,cntr_aprv_cd
+            ,devc_id
+            ,rgtr_uno
+            ,reg_dt
+            ,chg_dt
+        )
+        VALUES
+        (
+            #{cntrNm}
+            ,#{cntrAddr}
+            ,#{cntrTelno}
+            ,#{cntrAprvCd}
+            ,#{devcId}
+            ,#{rgtrUno}
+            ,now()
+            ,now()
+        )
+    </insert>
+
+    <update id="updateCenter" parameterType="CenterDTO">
+        UPDATE center
+        SET
+            chg_dt = now()
+            ,cntr_nm = #{cntrNm}
+            ,cntr_addr = #{cntrTelno}
+            ,cntr_telno = #{cntrTelno}
+            ,devc_id = #{devcId}
+            ,rgtr_uno = #{rgtrUno}
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </update>
+
+    <delete id="deleteCenter" parameterType="int">
+        DELETE FROM center
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </delete>
 
     <sql id="centerElements">
         uno

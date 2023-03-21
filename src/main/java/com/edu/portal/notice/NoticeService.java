@@ -1,27 +1,30 @@
-package com.edu.portal.center;
+package com.edu.portal.notice;
 
 import com.edu.portal.common.ApiException;
 import com.edu.portal.common.Constants;
 import com.edu.portal.common.Utils;
+import com.edu.portal.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class CenterService {
+public class NoticeService {
 
-    private final CenterMapper centerMapper;
+    private final UserService userService;
+    private final NoticeMapper noticeMapper;
 
     /**
-     * 센터 목록 조회
+     * 공지 목록 조회
      *
      * @param map
-     * @return Map<String, String>
+     * @return Map<String, Object>
      */
-    public Map<String, Object> getCenters(Map<String, String> map) {
+    public Map<String, Object> getNotices(Map<String, String> map) {
         map.putIfAbsent("page", "1");
         map.putIfAbsent("limit", "10");
         map.putIfAbsent("filter", "");
@@ -37,59 +40,49 @@ public class CenterService {
         // order parsing
         map.put("order_by", Utils.parseOrder(map.get("order"), map.get("sort")));
 
+        List<NoticeDTO> notices = noticeMapper.getNotices(map);
+        notices.forEach(i -> {
+            if(i.getRgtrUno() != null) i.setUser(userService.getUser(i.getRgtrUno()));
+        });
+
         Map<String, Object> result = new HashMap<>();
-        result.put("count", centerMapper.cntCenters(map));
-        result.put("rows", centerMapper.getCenters(map));
+        result.put("count", noticeMapper.cntNotices(map));
+        result.put("rows", notices);
 
         return result;
     }
 
     /**
-     * 센터 정보 조회
+     * 공지 내용 조회
      *
      * @param uno
-     * @return CenterDTO
+     * @return NoticeDTO
      */
-    public CenterDTO getCenter(int uno) {
-        return centerMapper.getCenter(uno);
+    public NoticeDTO getNotice(int uno) {
+        return noticeMapper.getNotice(uno);
     }
 
     /**
-     * 센터 정보 조회
+     * 공지 등록
      *
-     * @param cntrNm
-     * @return CenterDTO
+     * @param notice
+     * @return NoticeDTO
      */
-    public CenterDTO getCenter(String cntrNm) {
-        return centerMapper.getCenterByNm(cntrNm);
+    public NoticeDTO createNotice(NoticeDTO notice) {
+        noticeMapper.insertNotice(notice);
+        return getNotice(notice.getUno());
     }
 
     /**
-     * 센터 등록
-     *
-     * @param center
-     * @return CenterDTO
-     */
-    public CenterDTO createCenter(CenterDTO center) {
-        if(getCenter(center.getCntrNm()) != null) {
-            throw new ApiException(Constants.ALREADY_DATA);
-        }
-
-        centerMapper.insertCenter(center);
-
-        return getCenter(center.getUno());
-    }
-
-    /**
-     * 센터 정보 수정
+     * 공지 내용 수정
      *
      * @param uno
-     * @param center
+     * @param notice
      * @return int
      */
-    public int modifyCenter(int uno, CenterDTO center) {
-        center.setUno(uno);
-        int result = centerMapper.updateCenter(center);
+    public int modifyNotice(int uno, NoticeDTO notice) {
+        notice.setUno(uno);
+        int result = noticeMapper.updateNotice(notice);
 
         if(result == 0) {
             throw new ApiException(Constants.NO_DATA);
@@ -99,13 +92,13 @@ public class CenterService {
     }
 
     /**
-     * 센터 삭제
+     * 공지 삭제
      *
      * @param uno
      * @return int
      */
-    public int deleteCenter(int uno) {
-        int result = centerMapper.deleteCenter(uno);
+    public int deleteNotice(int uno) {
+        int result = noticeMapper.deleteNotice(uno);
 
         if(result == 0) {
             throw new ApiException(Constants.NO_DATA);
