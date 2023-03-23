@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.portal.board.BoardMapper">
+
+    <select id="cntTypes" parameterType="Map" resultType="int">
+        SELECT
+            COUNT(1)
+        FROM board_type
+        <include refid="typeConditions"/>
+    </select>
+
+    <select id="cntBoards" parameterType="Map" resultType="int">
+        SELECT
+            COUNT(1)
+        FROM board
+        <include refid="boardConditions"/>
+    </select>
+
+    <select id="getTypes" parameterType="Map" resultType="BoardTypeDTO">
+        SELECT
+        <include refid="typeElements"/>
+        FROM board_type
+        <include refid="typeConditions"/>
+        ORDER BY ${order_by}
+        LIMIT ${offset}, ${limit}
+    </select>
+
+    <select id="getBoards" parameterType="Map" resultType="BoardDTO">
+        SELECT
+        <include refid="boardElements"/>
+        FROM board
+        <include refid="boardConditions"/>
+        ORDER BY ${order_by}
+        LIMIT ${offset}, ${limit}
+    </select>
+
+    <select id="getType" parameterType="int" resultType="BoardTypeDTO">
+        SELECT
+        <include refid="typeElements"/>
+        FROM board_type
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </select>
+
+    <select id="getTypeByNm" parameterType="String" resultType="BoardTypeDTO">
+        SELECT
+        <include refid="typeElements"/>
+        FROM board_type
+        WHERE 1 = 1
+        AND bbs_type_nm = #{bbsTypeNm}
+    </select>
+
+    <select id="getBoard" parameterType="int" resultType="BoardDTO">
+        SELECT
+        <include refid="boardElements"/>
+        FROM board
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </select>
+
+    <insert id="inserType" useGeneratedKeys="true" keyProperty="uno" parameterType="BoardTypeDTO">
+        INSERT INTO board_type
+        (
+            bbs_type_nm
+            ,bbs_type_pstg
+            ,bbs_file_yn
+            ,reg_dt
+            ,chg_dt
+        )
+        VALUES
+        (
+            #{bbsTypeNm}
+            ,#{bbsTypePstg}
+            ,#{bbsFileYn}
+            ,now()
+            ,now()
+        )
+    </insert>
+
+    <insert id="inserBoard" useGeneratedKeys="true" keyProperty="uno" parameterType="BoardDTO">
+        INSERT INTO board
+        (
+            bbs_type_uno
+            ,bbs_ttl
+            ,bbs_cn
+            ,bbs_file
+            ,bbs_file_orgm
+            ,fixed_yn
+            ,rgtr_uno
+            ,reg_dt
+            ,chg_dt
+        )
+        VALUES
+        (
+            #{bbsTypeUno}
+            ,#{bbsTtl}
+            ,#{bbsCn}
+            ,#{bbsFile}
+            ,#{bbsFileOrgm}
+            ,#{fixedYn}
+            ,#{rgtrUno}
+            ,now()
+            ,now()
+        )
+    </insert>
+
+    <update id="updateType" parameterType="BoardTypeDTO">
+        UPDATE board_type
+        SET
+            chg_dt = now()
+            ,bbs_type_nm = #{bbsTypeNm}
+            ,bbs_type_pstg = #{bbsTypePstg}
+            ,bbs_file_yn = #{bbsFileYn}
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </update>
+
+    <update id="updateBoard" parameterType="BoardDTO">
+        UPDATE board
+        SET
+            chg_dt = now()
+            ,bbs_type_uno = #{bbsTypeUno}
+            ,bbs_ttl = #{bbsTtl}
+            ,bbs_cn = #{bbsCn}
+            ,bbs_file = #{bbsFile}
+            ,bbs_file_orgm = #{bbsFileOrgm}
+            ,fixed_yn = #{fixedYn}
+            ,rgtr_uno = #{rgtrUno}
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </update>
+
+    <sql id="typeElements">
+        uno
+        ,bbs_type_nm
+        ,bbs_type_pstg
+        ,bbs_file_yn
+        ,reg_dt
+        ,chg_dt
+    </sql>
+
+    <sql id="boardElements">
+        uno
+        ,bbs_type_uno
+        ,bbs_ttl
+        ,bbs_cn
+        ,bbs_file
+        ,bbs_file_orgm
+        ,fixed_yn
+        ,rgtr_uno
+        ,reg_dt
+        ,chg_dt
+    </sql>
+
+    <sql id="typeConditions">
+        WHERE 1 = 1
+        AND bbs_type_pstg ${bbs_type_pstg}
+    </sql>
+
+    <sql id="boardConditions">
+        WHERE 1 = 1
+        AND bbs_type_uno ${bbs_type_uno}
+        <if test="bbs_ttl != null">
+            AND bbs_ttl ${bbs_ttl}
+        </if>
+        <if test="bbs_cn != null">
+            OR bbs_cn ${bbs_cn}
+        </if>
+        <if test="mbr_nm != null">
+            AND rgtr_uno IN (SELECT uno FROM user WHERE mbr_nm ${mbr_nm})
+        </if>
+    </sql>
+
+</mapper>

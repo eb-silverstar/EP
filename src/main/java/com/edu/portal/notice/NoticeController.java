@@ -60,7 +60,7 @@ public class NoticeController {
     }
 
     /**
-     * 공지 내용 수정
+     * 공지 수정
      *
      * @param uno
      * @param notice
