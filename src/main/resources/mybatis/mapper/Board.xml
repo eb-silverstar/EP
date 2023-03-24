@@ -58,7 +58,7 @@
         AND uno = #{uno}
     </select>
 
-    <insert id="inserType" useGeneratedKeys="true" keyProperty="uno" parameterType="BoardTypeDTO">
+    <insert id="insertType" useGeneratedKeys="true" keyProperty="uno" parameterType="BoardTypeDTO">
         INSERT INTO board_type
         (
             bbs_type_nm
@@ -77,7 +77,7 @@
         )
     </insert>
 
-    <insert id="inserBoard" useGeneratedKeys="true" keyProperty="uno" parameterType="BoardDTO">
+    <insert id="insertBoard" useGeneratedKeys="true" keyProperty="uno" parameterType="BoardDTO">
         INSERT INTO board
         (
             bbs_type_uno
@@ -129,6 +129,18 @@
         WHERE 1 = 1
         AND uno = #{uno}
     </update>
+
+    <delete id="deleteType" parameterType="int">
+        DELETE FROM board_type
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </delete>
+
+    <delete id="deleteBoard" parameterType="int">
+        DELETE FROM board
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </delete>
 
     <sql id="typeElements">
         uno

@@ -2,7 +2,6 @@ package com.edu.portal.board;
 
 import com.edu.portal.common.ApiResponseEntity;
 import com.edu.portal.common.Constants;
-import com.edu.portal.notice.NoticeDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,7 +82,7 @@ public class BoardController {
      * @param type
      * @return
      */
-    @PostMapping
+    @PostMapping("/type")
     public ResponseEntity<ApiResponseEntity> createType(@RequestBody BoardTypeDTO type) {
         BoardTypeDTO result = boardService.createType(type);
 
@@ -99,6 +98,60 @@ public class BoardController {
     @PostMapping
     public ResponseEntity<ApiResponseEntity> creatBoard(@RequestBody BoardDTO board) {
         BoardDTO result = boardService.createBoard(board);
+
+        return new ResponseEntity<ApiResponseEntity>(new ApiResponseEntity(true, Constants.SUCCESS, result), HttpStatus.OK);
+    }
+
+    /**
+     * 보드 타입 수정
+     *
+     * @param uno
+     * @param type
+     * @return
+     */
+    @PutMapping("/type/{uno}")
+    public ResponseEntity<ApiResponseEntity> modifyType(@PathVariable("uno") int uno, @RequestBody BoardTypeDTO type) {
+        int result = boardService.modifyType(uno, type);
+
+        return new ResponseEntity<ApiResponseEntity>(new ApiResponseEntity(true, Constants.SUCCESS, result), HttpStatus.OK);
+    }
+
+    /**
+     * 보드 수정
+     *
+     * @param uno
+     * @param board
+     * @return
+     */
+    @PutMapping("/{uno}")
+    public ResponseEntity<ApiResponseEntity> modifyBoard(@PathVariable("uno") int uno, @RequestBody BoardDTO board) {
+        int result = boardService.modifyBoard(uno, board);
+
+        return new ResponseEntity<ApiResponseEntity>(new ApiResponseEntity(true, Constants.SUCCESS, result), HttpStatus.OK);
+    }
+
+    /**
+     * 보드 타입 삭제
+     *
+     * @param uno
+     * @return
+     */
+    @DeleteMapping("/type/{uno}")
+    public ResponseEntity<ApiResponseEntity> deleteType(@PathVariable("uno") int uno) {
+        int result = boardService.deleteType(uno);
+
+        return new ResponseEntity<ApiResponseEntity>(new ApiResponseEntity(true, Constants.SUCCESS, result), HttpStatus.OK);
+    }
+
+    /**
+     * 보드 삭제
+     *
+     * @param uno
+     * @return
+     */
+    @DeleteMapping("/{uno}")
+    public ResponseEntity<ApiResponseEntity> deleteBoard(@PathVariable("uno") int uno) {
+        int result = boardService.deleteBoard(uno);
 
         return new ResponseEntity<ApiResponseEntity>(new ApiResponseEntity(true, Constants.SUCCESS, result), HttpStatus.OK);
     }

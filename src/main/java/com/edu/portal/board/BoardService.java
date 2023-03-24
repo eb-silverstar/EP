@@ -1,11 +1,8 @@
 package com.edu.portal.board;
 
-import com.edu.portal.center.CenterDTO;
 import com.edu.portal.common.ApiException;
-import com.edu.portal.common.ApiStatusEntity;
 import com.edu.portal.common.Constants;
 import com.edu.portal.common.Utils;
-import com.edu.portal.notice.NoticeDTO;
 import com.edu.portal.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -142,7 +139,14 @@ public class BoardService {
         return getBoard(board.getUno());
     }
 
-    /*public int modifyType(int uno, BoardTypeDTO type) {
+    /**
+     * 보드 타입 수정
+     *
+     * @param uno
+     * @param type
+     * @return int
+     */
+    public int modifyType(int uno, BoardTypeDTO type) {
         type.setUno(uno);
         int result = boardMapper.updateType(type);
 
@@ -153,15 +157,54 @@ public class BoardService {
         return result;
     }
 
+    /**
+     * 보드 수정
+     *
+     * @param uno
+     * @param board
+     * @return int
+     */
     public int modifyBoard(int uno, BoardDTO board) {
-        notice.setUno(uno);
-        int result = noticeMapper.updateNotice(notice);
+        board.setUno(uno);
+        int result = boardMapper.updateBoard(board);
 
         if(result == 0) {
             throw new ApiException(Constants.NO_DATA);
         }
 
         return result;
-    }*/
+    }
+
+    /**
+     * 보드 타입 삭제
+     *
+     * @param uno
+     * @return int
+     */
+    public int deleteType(int uno) {
+        int result = boardMapper.deleteType(uno);
+
+        if(result == 0) {
+            throw new ApiException(Constants.NO_DATA);
+        }
+
+        return result;
+    }
+
+    /**
+     * 보드 삭제
+     *
+     * @param uno
+     * @return int
+     */
+    public int deleteBoard(int uno) {
+        int result = boardMapper.deleteBoard(uno);
+
+        if(result == 0) {
+            throw new ApiException(Constants.NO_DATA);
+        }
+
+        return result;
+    }
 
 }

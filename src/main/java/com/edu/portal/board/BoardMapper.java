@@ -1,6 +1,5 @@
 package com.edu.portal.board;
 
-import com.edu.portal.notice.NoticeDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -20,5 +19,7 @@ public interface BoardMapper {
     public int insertBoard(BoardDTO board);
     public int updateType(BoardTypeDTO type);
     public int updateBoard(BoardDTO board);
+    public int deleteType(int uno);
+    public int deleteBoard(int uno);
 
 }
