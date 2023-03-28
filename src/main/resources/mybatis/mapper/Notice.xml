@@ -4,7 +4,7 @@
 
     <select id="cntNotices" parameterType="Map" resultType="int">
         SELECT
-        COUNT(1)
+           COUNT(1)
         FROM notice
         <include refid="noticeConditions"/>
     </select>
@@ -84,7 +84,7 @@
             OR ntc_cn ${ntc_cn}
         </if>
         <if test="mbr_nm != null">
-            AND rgtr_uno IN (SELECT uno FROM user WHERE mbr_nm ${mbr_nm}
+            AND rgtr_uno IN (SELECT uno FROM user WHERE mbr_nm ${mbr_nm})
         </if>
     </sql>
 

@@ -1,4 +1,4 @@
-package com.edu.portal.board;
+package com.edu.portal.faq;
 
 import com.edu.portal.user.UserDTO;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class BoardDTO {
+public class FaqDTO {
 
     /**
      * 일련번호
@@ -17,39 +17,29 @@ public class BoardDTO {
     private Integer uno;
 
     /**
-     * 게시판 타입 참조
+     * 카테고리 (1: 이용안내, 2: 멘토링, 3: 온라인학습, 4: 온라인독서, 5: MR스포츠)
      */
-    private Integer bbsTypeUno;
+    private String faqSe;
 
     /**
-     * 타이틀
+     * 질문
      */
-    private String bbsTtl;
+    private String qstnCn;
 
     /**
-     * 내용
+     * 답변
      */
-    private String bbsCn;
+    private String ansCn;
 
     /**
-     * 파일명
-     */
-    private String bbsFile;
-
-    /**
-     * 원본 파일명
-     */
-    private String bbsFileOrgm;
-
-    /**
-     * 고정 여부
-     */
-    private String fixedYn;
-
-    /**
-     * 등록자
+     * 등록자 고유번호
      */
     private Integer rgtrUno;
+
+    /**
+     * 관리자 고유번호
+     */
+    private Integer mngrUno;
 
     /**
      * 등록일시
@@ -60,11 +50,6 @@ public class BoardDTO {
      * 수정일시
      */
     private String chgDt;
-
-    /**
-     * 보드 타입
-     */
-    private BoardTypeDTO boardType;
 
     /**
      * 등록자

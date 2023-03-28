@@ -79,6 +79,16 @@ public class UserService {
     /**
      * 회원 정보 조회
      *
+     * @param uno
+     * @return UserDTO
+     */
+    public UserDTO getActiveUser(int uno) {
+        return userMapper.getActiveUser(Map.of("uno", uno));
+    }
+
+    /**
+     * 회원 정보 조회
+     *
      * @param mbrId
      * @return UserDTO
      */
@@ -183,7 +193,7 @@ public class UserService {
      * @return UserDTO
      */
     public UserDTO modifyUser(int uno, UserDTO user) {
-        UserDTO chkUser = getActiveUser(user.getMbrId());
+        UserDTO chkUser = getActiveUser(uno);
 
         if(chkUser != null && uno != chkUser.getUno()) {
             ApiStatusEntity status = Constants.ALREADY_DATA;

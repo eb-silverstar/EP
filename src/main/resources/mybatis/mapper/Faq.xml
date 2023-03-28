@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.portal.faq.FaqMapper">
+
+    <select id="cntFaqs" parameterType="Map" resultType="int">
+        SELECT
+          COUNT(1)
+        FROM faq
+        <include refid="faqConditions"/>
+    </select>
+
+    <select id="getFaqs" parameterType="Map" resultType="FaqDTO">
+        SELECT
+        <include refid="faqElements"/>
+        FROM faq
+        <include refid="faqConditions"/>
+        ORDER BY ${order_by}
+        LIMIT ${offset}, ${limit}
+    </select>
+
+    <select id="getFaq" parameterType="int" resultType="FaqDTO">
+        SELECT
+        <include refid="faqElements"/>
+        FROM faq
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </select>
+
+    <insert id="insertFaq" useGeneratedKeys="true" keyProperty="uno" parameterType="FaqDTO">
+        INSERT INTO faq
+        (
+            faq_se
+            ,qstn_cn
+            ,ans_cn
+            ,rgtr_uno
+            ,reg_dt
+            ,chg_dt
+        )
+        VALUES
+        (
+            #{faqSe}
+            ,#{qstnCn}
+            ,#{ansCn}
+            ,#{rgtrUno}
+            ,now()
+            ,now()
+        )
+    </insert>
+
+    <update id="updateFaq" parameterType="FaqDTO">
+        UPDATE faq
+        SET
+            chg_dt = now()
+            ,faq_se = #{faqSe}
+            ,qstn_cn = #{qstnCn}
+            ,ans_cn = #{ansCn}
+            ,rgtr_uno = #{rgtrUno}
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </update>
+
+    <delete id="deleteFaq" parameterType="int">
+        DELETE FROM faq
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </delete>
+
+    <sql id="faqElements">
+        uno
+        ,faq_se
+        ,qstn_cn
+        ,ans_cn
+        ,rgtr_uno
+        ,mngr_uno
+        ,reg_dt
+        ,chg_dt
+    </sql>
+
+    <sql id="faqConditions">
+        WHERE 1 = 1
+        <if test="faq_se != null">
+            AND faq_se ${faq_se}
+        </if>
+        <if test="qstn_cn != null">
+            AND qstn_cn ${qstn_cn}
+        </if>
+        <if test="ans_cn != null">
+            OR ans_cn ${ans_cn}
+        </if>
+        <if test="mbr_nm != null">
+            AND rgtr_uno IN (SELECT uno FROM user WHERE mbr_nm ${mbr_nm})
+        </if>
+    </sql>
+
+</mapper>

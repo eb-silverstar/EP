@@ -1,6 +1,5 @@
 package com.edu.portal.common;
 
-import lombok.val;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
