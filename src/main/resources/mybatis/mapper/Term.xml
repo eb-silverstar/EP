@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.portal.term.TermMapper">
+
+    <select id="cntTerms" parameterType="Map" resultType="int">
+        SELECT
+             COUNT(1)
+        FROM term
+        <include refid="termConditions"/>
+    </select>
+
+    <select id="cntTermsBySe" parameterType="int" resultType="int">
+        SELECT
+            COUNT(1)
+        FROM term
+        WHERE trms_se = #{trmsSe}
+    </select>
+
+    <select id="getTerms" parameterType="Map" resultType="TermDTO">
+        SELECT
+        <include refid="termElements"/>
+        FROM term
+        <include refid="termConditions"/>
+        ORDER BY ${order_by}
+        LIMIT ${offset}, ${limit}
+    </select>
+
+    <select id="getTerm" parameterType="int" resultType="TermDTO">
+        SELECT
+        <include refid="termElements"/>
+        FROM term
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </select>
+
+    <select id="getLastVer" parameterType="int" resultType="TermDTO">
+        SELECT
+        <include refid="termElements"/>
+        FROM term
+        WHERE trms_se = #{trmsSe}
+        ORDER BY trms_ver DESC
+        LIMIT 1
+    </select>
+
+    <insert id="insertTerm" useGeneratedKeys="true" keyProperty="uno" parameterType="TermDTO">
+        INSERT INTO term
+        (
+            trms_se
+            ,trms_ttl
+            ,trms_cn
+            ,trms_ver
+            ,fixed_yn
+            ,rgtr_uno
+            ,reg_dt
+            ,chg_dt
+        )
+        VALUES
+        (
+            #{trmsSe}
+            ,#{trmsTtl}
+            ,#{trmsCn}
+            ,#{trmsVer}
+            ,#{fixedYn}
+            ,#{rgtrUno}
+            ,now()
+            ,now()
+        )
+    </insert>
+
+    <update id="updateTerm" parameterType="TermDTO">
+        UPDATE term
+        SET
+            chg_dt = now()
+            ,trms_se = #{trmsSe}
+            ,trms_ttl = #{trmsTtl}
+            ,trms_cn = #{trmsCn}
+            ,trms_ver = #{trmsVer}
+            ,fixed_yn = #{fixedYn}
+            ,rgtr_uno = #{rgtrUno}
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </update>
+
+    <delete id="deleteTerm" parameterType="int">
+        DELETE FROM term
+        WHERE 1 = 1
+        AND uno = #{uno}
+    </delete>
+
+    <sql id="termElements">
+        uno
+        ,trms_se
+        ,trms_ttl
+        ,trms_cn
+        ,trms_ver
+        ,fixed_yn
+        ,rgtr_uno
+        ,reg_dt
+        ,chg_dt
+    </sql>
+
+    <sql id="termConditions">
+        WHERE 1 = 1
+        <if test="trms_se != null">
+            AND trms_se ${trms_se}
+        </if>
+        <if test="trms_ttl != null">
+            AND trms_ttl ${trms_ttl}
+        </if>
+        <if test="mbr_nm != null">
+            AND rgtr_uno IN (SELECT uno FROM user WHERE mbr_nm ${mbr_nm})
+        </if>
+    </sql>
+
+</mapper>
