@@ -41,7 +41,7 @@ public class Utils {
                             iMap.put("col", col);
 
                             if("in".equals(map.get("op")) && !map.get("val").isEmpty()) {
-                                iMap.put("con", "IN (" + map.get("val").replaceAll("([^,]*)", "'$1',") + ")");
+                                iMap.put("con", "IN (" + map.get("val").replaceAll("([^,])", "'$1'") + ")");
                             } else if("like".equals(map.get("op")) && !map.get("val").isEmpty()) {
                                 iMap.put("con", "LIKE '%" + map.get("val") + "%'");
                             } else if("between".equals(map.get("op")) && !map.get("val").isEmpty() && !map.get("val2").isEmpty()) {
@@ -62,7 +62,7 @@ public class Utils {
 
                     } else {
                         if("in".equals(map.get("op")) && !map.get("val").isEmpty()) {
-                            map.put("con", "IN (" + map.get("val").replaceAll("([^,]*)", "'$1',") + ")");
+                            map.put("con", "IN (" + map.get("val").replaceAll("([^,])", "'$1'") + ")");
                         } else if("like".equals(map.get("op")) && !map.get("val").isEmpty()) {
                             map.put("con", "LIKE '%" + map.get("val") + "%'");
                         } else if("between".equals(map.get("op")) && !map.get("val").isEmpty() && !map.get("val2").isEmpty()) {
